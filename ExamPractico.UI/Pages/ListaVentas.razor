@@ -1,0 +1,58 @@
+﻿@page "/listaventas"
+@using BlazorPractica.Model
+@using Interfaces
+@inject IVentasService VentasService
+
+<h1>Lista de Ventas</h1>
+<p>Este apartado muestra la lista de ventas.</p>
+
+@if (ventas == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Serie</th>
+                <th>Numero</th>
+                <th>Numero Cliente</th>
+                <th>Nombre</th>
+                <th>Total</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var venta in ventas)
+            {
+                <tr>
+                    <td>@venta.idVenta</td>
+                    <td>@venta.Serie</td>
+                    <td>@venta.Numero</td>
+                    <td>@venta.idCliente</td>
+                    <td>@venta.nombre @venta.apellidoPaterno @venta.apellidoMaterno</td>
+                    <td>@venta.totalVenta</td>
+                    <td>@venta.fechaVenta</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+    @code {
+        private IEnumerable<BlazorPractica.Model.Ventas> ventas;
+        protected override async Task OnInitializedAsync()
+        {
+            //return base.OnInitializedAsync();
+            try
+            {
+                //await JS.MostrarMensaje("Estes es un mensaje de prueba");
+                ventas = await VentasService.GetAllVentas();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+    }

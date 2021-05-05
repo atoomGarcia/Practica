@@ -1,0 +1,55 @@
+﻿@page "/agregardepa"
+@page "/agregardepa/{idDep:int}"
+@using BlazorPractica.Model
+@using Interfaces
+@inject IDepService DepService
+@inject NavigationManager NavigationManager
+
+
+<h1>Agregar Departamento</h1>
+<p>Ingrese el departamento a agregar.</p>
+
+<EditForm Model="@departamento">
+    <table class="table">
+        <tr>
+            <td>Nombre Departamento</td>
+            <td><input type="text" @bind="departamento.nombreDep" /> </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align:center">
+                <input type="submit" value="Guardar" @onclick="GuardarDep" />
+                <input type="button" value="Cancelar" @onclick="CancelDep" />
+            </td>
+        </tr>
+    </table>
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public int idDep { get; set; }
+    Dep departamento = new Dep();
+
+    protected void CancelDep()
+    {
+        NavigationManager.NavigateTo("/listadepa");
+    }
+    protected async Task GuardarDep()
+    {
+        await DepService.GuardarDepartamento(departamento);
+        NavigationManager.NavigateTo("/listadepa");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (idDep == 0)
+        {
+
+        }
+        else
+        {
+            departamento = await DepService.GetDepartamento(idDep);
+        }
+    }
+
+}

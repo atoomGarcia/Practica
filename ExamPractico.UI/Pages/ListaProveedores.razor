@@ -1,0 +1,63 @@
+﻿@page "/listaprov"
+@using BlazorPractica.Model
+@using Interfaces
+@inject IProvService ProvService
+
+<h1>Lista de Proveedores</h1>
+<p>Este apartado muestra la lista de proveedores.</p>
+@if (proveedores == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Razon Social</th>
+                <th>RFC</th>
+                <th>Estado</th>
+                <th>Ciudad</th>
+                <th>Colonia</th>
+                <th>C.P.</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var proveedor in proveedores)
+            {
+            <tr>
+                <td>@proveedor.idProveedor</td>
+                <td>@proveedor.razonSocial</td>
+                <td>@proveedor.rfc</td>
+                <td>@proveedor.estado</td>
+                <td>@proveedor.ciudad</td>
+                <td>@proveedor.colonia</td>
+                <td>@proveedor.cp</td>
+                <td><a href="/agregaprov/@proveedor.idProveedor"><i>Editar</i></a></td>
+                <td><a href="/clientedelete/@proveedor.idProveedor"><i>Borrar</i></a></td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<Prov> proveedores;
+    protected override async Task OnInitializedAsync()
+    {
+        //return base.OnInitializedAsync();
+        try
+        {
+            //await JS.MostrarMensaje("Estes es un mensaje de prueba");
+            proveedores = await ProvService.GetAllProvs();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+}

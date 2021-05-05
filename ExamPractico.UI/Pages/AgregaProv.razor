@@ -1,0 +1,72 @@
+﻿@page "/agregaprov"
+@page "/agregaprov/{idProveedor:int}"
+@using BlazorPractica.Model
+@using Interfaces
+@inject IProvService ProvService
+@inject NavigationManager NavigationManager
+
+<h1>Agregar Proveedores</h1>
+<p>Ingrese el proveedor a agregar.</p>
+<EditForm Model="@proveedor">
+    <table class="table">
+        <tr>
+            <td>Razón Social</td>
+            <td><input type="text" @bind="proveedor.razonSocial" /> </td>
+        </tr>
+        <tr>
+            <td>RFC</td>
+            <td><input type="text" @bind="proveedor.rfc" /> </td>
+        </tr>
+        <tr>
+            <td>Estado</td>
+            <td><input type="text" @bind="proveedor.estado" /> </td>
+        </tr>
+        <tr>
+            <td>Ciudad</td>
+            <td><input type="text" @bind="proveedor.ciudad" /> </td>
+        </tr>
+        <tr>
+            <td>Colonia</td>
+            <td><input type="text" @bind="proveedor.colonia" /> </td>
+        </tr>
+        <tr>
+            <td>Proveedor</td>
+            <td><input type="text" @bind="proveedor.cp" /> </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align:center">
+                <input type="submit" value="Guardar" @onclick="GuardarProv" />
+                <input type="button" value="Cancelar" @onclick="CancelProv" />
+            </td>
+        </tr>
+    </table>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int idProveedor { get; set; }
+    Prov proveedor = new Prov();
+
+    protected void CancelProv()
+    {
+        NavigationManager.NavigateTo("/listaprov");
+    }
+    protected async Task GuardarProv()
+    {
+        await ProvService.GuardarProv(proveedor);
+        NavigationManager.NavigateTo("/listaprov");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (idProveedor == 0)
+        {
+
+        }
+        else
+        {
+            proveedor = await ProvService.GetProv(idProveedor);
+        }
+    }
+
+}

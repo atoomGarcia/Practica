@@ -1,0 +1,86 @@
+﻿@page "/agregararticulos"
+@page "/agregararticulos/{idArticulo:int}"
+@using BlazorPractica.Model
+@using Interfaces
+@inject IArticuloService ArticuloService
+@inject NavigationManager NavigationManager
+
+<h1>Agregar Articulos</h1>
+
+<EditForm Model="@articulo">
+    <table class="table">
+        <tr>
+            <td>Codigo</td>
+            <td><input type="text" @bind="articulo.codigo" /> </td>
+        </tr>
+        <tr>
+            <td>Nombre</td>
+            <td><input type="text" @bind="articulo.nombre" /> </td>
+        </tr>
+        <tr>
+            <td>Descripción</td>
+            <td><input type="text" @bind="articulo.descripcion" /> </td>
+        </tr>
+        <tr>
+            <td>Departamento</td>
+            <td><input type="text" @bind="articulo.idDep" /> </td>
+        </tr>
+        <tr>
+            <td>Stock</td>
+            <td><input type="text" @bind="articulo.stock" /> </td>
+        </tr>
+        <tr>
+            <td>Costo</td>
+            <td><input type="text" @bind="articulo.costo" /> </td>
+        </tr>
+        <tr>
+            <td>Precio</td>
+            <td><input type="text" @bind="articulo.precio" /> </td>
+        </tr>
+        <tr>
+            <td>Proveedor</td>
+            <td><input type="text" @bind="articulo.idProveedor" /> </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align:center">
+                <input type="submit" value="Guardar" @onclick="GuardarArt" />
+                <input type="button" value="Cancelar" @onclick="CancelArticulo" />
+            </td>
+        </tr>
+    </table>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public int idArticulo { get; set; }
+    //public int idDep { get; set; }
+    Art articulo = new Art();
+
+    protected void CancelArticulo()
+    {
+        NavigationManager.NavigateTo("/listaarticulos");
+    }
+
+    protected async Task GuardarArt()
+    {
+
+        await ArticuloService.GuardarArt(articulo);
+
+        NavigationManager.NavigateTo("/listaarticulos");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        if (idArticulo == 0)
+        {
+            //cliente.fechaNacimiento = DateTime.Now;
+        }
+        else
+        {
+            articulo = await ArticuloService.GetArt(idArticulo);
+        }
+    }
+
+}

@@ -1,0 +1,68 @@
+﻿@page "/listaarticulos"
+@using BlazorPractica.Model
+@using Interfaces
+@inject IArticuloService ArticuloService
+
+<h1>Lista de Articulos</h1>
+<p>Este apartado muestra la lista de articulos.</p>
+@if (articulos == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Codigo</th>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Departamento</th>
+                <th>stock</th>
+                <th>costo</th>
+                <th>precio</th>
+                <th>Proveedor</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var articulo in articulos)
+            {
+                <tr>
+                    <td>@articulo.idArticulo</td>
+                    <td>@articulo.codigo</td>
+                    <td>@articulo.nombre</td>
+                    <td>@articulo.descripcion</td>
+                    <td>@articulo.nombreDep</td>
+                    <td>@articulo.stock</td>
+                    <td>@articulo.costo</td>
+                    <td>@articulo.precio</td>
+                    <td>@articulo.razonSocial</td>
+                    <td><a href="/agregararticulos/@articulo.idArticulo"><i>Editar</i></a></td>
+                    <td><a href="/agregararticulos/@articulo.idArticulo"><i>Borrar</i></a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private IEnumerable<Art> articulos;
+    protected override async Task OnInitializedAsync()
+    {
+        //return base.OnInitializedAsync();
+        try
+        {
+            //await JS.MostrarMensaje("Estes es un mensaje de prueba");
+            articulos = await ArticuloService.GetAllArts();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+}

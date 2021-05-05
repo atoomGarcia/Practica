@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.Typeahead" Version="4.6.0" />
+    <PackageReference Include="CurrieTechnologies.Razor.SweetAlert2" Version="4.4.0" />
+    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="SweetAlert" Version="1.0.0" />
+    <PackageReference Include="Syncfusion.Blazor" Version="19.1.0.58" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlazorPractica.Model\BlazorPractica.Model.csproj" />
+  </ItemGroup>
+
+</Project>

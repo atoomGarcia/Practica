@@ -1,0 +1,86 @@
+﻿@page "/detallecliente"
+@page "/detallecliente/{idCliente:int}"
+@using BlazorPractica.Model
+@using Interfaces
+@inject IClienteService ClienteService
+@inject NavigationManager NavigationManager
+
+<h1>Clientes</h1>
+
+<EditForm Model="@cliente">
+    <table class="table">
+        <tr>
+            <td>Nombre</td>
+            <td><input type="text" @bind="cliente.nombre" /> </td>
+        </tr>
+        <tr>
+            <td>Apellido Paterno</td>
+            <td><input type="text" @bind="cliente.apellidoPaterno" /> </td>
+        </tr>
+        <tr>
+            <td>Apellido Materno</td>
+            <td><input type="text" @bind="cliente.apellidoMaterno" /> </td>
+        </tr>
+        <tr>
+            <td>RFC</td>
+            <td><input type="text" @bind="cliente.rfc" /> </td>
+        </tr>
+        <tr>
+            <td>Fecha Nacimiento</td>
+            <td><input type="text" @bind="cliente.fechaNacimiento" /> </td>
+        </tr>
+        <tr>
+            <td>Estado</td>
+            <td><input type="text" @bind="cliente.estado" /> </td>
+        </tr>
+        <tr>
+            <td>Ciudad</td>
+            <td><input type="text" @bind="cliente.ciudad" /> </td>
+        </tr>
+        <tr>
+            <td>Colonia</td>
+            <td><input type="text" @bind="cliente.colonia" /> </td>
+        </tr>
+        <tr>
+            <td>Codigo Postal</td>
+            <td><input type="text" @bind="cliente.cp" /> </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align:center">
+                <input type="submit" value="Guardar" @onclick="GuardarCliente" />
+                <input type="button" value="Cancelar" @onclick="CancelCliente" />
+            </td>
+        </tr>
+    </table>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int idCliente { get; set; }
+    Cliente cliente = new Cliente();
+
+    protected void CancelCliente()
+    {
+        NavigationManager.NavigateTo("/listaclientes");
+    }
+
+    protected async Task GuardarCliente()
+    {
+
+        await ClienteService.GuardarCliente(cliente);
+
+        NavigationManager.NavigateTo("/listaclientes");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (idCliente == 0)
+        {
+            cliente.fechaNacimiento = DateTime.Now;
+        }
+        else
+        {
+            cliente = await ClienteService.GetCliente(idCliente);
+        }
+    }
+}

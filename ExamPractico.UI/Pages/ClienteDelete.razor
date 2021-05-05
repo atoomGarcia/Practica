@@ -1,0 +1,71 @@
+﻿@page "/clientedelete/{idCliente:int}"
+@using BlazorPractica.Model
+@using Interfaces
+@inject IClienteService ClienteService
+@inject NavigationManager NavigatorManager
+
+<h3>Borrar Cliente</h3>
+<p style="color:red;text-align:center">Esta seguro que quiere borrar el cliente?</p>
+
+<EditForm Model="@cliente">
+<table class="table">
+    <tr>
+        <td>Nombre</td>
+        <td><input type="text" @bind="cliente.nombre" /> </td>
+    </tr>
+    <tr>
+        <td>Apellido Paterno</td>
+        <td><input type="text" @bind="cliente.apellidoPaterno" /> </td>
+    </tr>
+    <tr>
+        <td>Apellido Materno</td>
+        <td><input type="text" @bind="cliente.apellidoMaterno" /> </td>
+    </tr>
+    <tr>
+        <td>Fecha Nacimiento</td>
+        <td><input type="text" @bind="cliente.fechaNacimiento" /> </td>
+    </tr>
+    <tr>
+        <td>Estado</td>
+        <td><input type="text" @bind="cliente.estado" /> </td>
+    </tr>
+    <tr>
+        <td>Ciudad</td>
+        <td><input type="text" @bind="cliente.ciudad" /> </td>
+    </tr>
+    <tr>
+        <td>Colonia</td>
+        <td><input type="text" @bind="cliente.colonia" /> </td>
+    </tr>
+    <tr>
+        <td>Codigo Postal</td>
+        <td><input type="text" @bind="cliente.cp" /> </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="text-align:center">
+            <input type="submit" value="Borrar" @onclick="DeleteCliente" />
+            <input type="button" value="Cancelar" @onclick="Cancel" />
+        </td>
+    </tr>
+</table>
+</EditForm>
+
+
+@code {
+    Cliente cliente = new Cliente();
+    [Parameter]
+    public int idCliente { get; set; }
+    protected async Task DeleteCliente()
+    {
+        await ClienteService.DeleteCliente(idCliente);
+        NavigatorManager.NavigateTo("/listaclientes");
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        cliente = await ClienteService.GetCliente(idCliente);
+    }
+    protected void Cancel()
+    {
+        NavigatorManager.NavigateTo("/listaclientes");
+    }
+}

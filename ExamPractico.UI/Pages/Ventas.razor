@@ -1,0 +1,299 @@
+﻿@page "/ventas"
+@using BlazorPractica.Model
+@using Blazored.Typeahead
+@using BlazorPractica.Data
+@using Interfaces
+@inject IClienteService ClienteService
+@inject IArticuloService ArticuloService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager NavigationManager
+@inject IVentasService VentasService
+
+
+<h1>Registro de Ventas</h1>
+
+<div class="card bg-default">
+    <div class="card-header">Datos del cliente y venta</div>
+    <div class="card-body">
+        <div class="dxbs-fl form-horizontal" id="BootstrapFormLayout1">
+            <div class="row">
+                <div id="BootstrapFormLayout1_0" class="col-md-1">
+                    <label>Cliente:</label>
+                </div>
+                <div id="BootstrapFormLayout1_0" class="col-md-6">
+                    <BlazoredTypeahead SearchMethod="SearchArticles"
+                                       @bind-Value="SelectedArticle">
+                        <SelectedTemplate>
+                            @context.nombre @context.apellidoPaterno @context.apellidoMaterno
+                        </SelectedTemplate>
+                        <ResultTemplate>
+                            @context.idCliente <strong>  |  @context.nombre @context.apellidoPaterno @context.apellidoMaterno</strong>
+                        </ResultTemplate>
+                    </BlazoredTypeahead>
+                    @if (SelectedArticle != null)
+                    {
+                        <input type="text" id="idCliente" value="@SelectedArticle.idCliente" hidden >
+                        <span id="idCliente2" hidden>@SelectedArticle.idCliente</span>
+                        <input class="form-control" type="text" name="idCliente3" id="idCliente3" placeholder="" hidden>
+                    }
+
+                </div>
+                <div id="BootstrapFormLayout1_0" class="col-md-2">
+                    @if (SelectedArticle != null)
+                    {
+                        <h3><span id="span1" class="badge badge-secondary">RFC: @SelectedArticle.rfc</span></h3>
+                    }
+                </div>
+                <div id="BootstrapFormLayout1_1" class="col-md-3">
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div id="BootstrapFormLayout1_2" class="col-md-3">
+                    <input class="form-control" type="text" name="serie_comprobante" id="serie_comprobante" @bind="ventas.Serie" maxlength="7" placeholder="Serie">
+                </div>
+                <div id="BootstrapFormLayout1_4" class="col-md-3">
+                    <input class="form-control" type="text" name="num_comprobante" id="num_comprobante" @bind="ventas.Numero" maxlength="10" placeholder="Número" required>
+                </div>
+                <div id="BootstrapFormLayout1_nom" class="col-md-1">
+                    <label>Articulo:</label>
+                </div>
+                <div id="BootstrapFormLayout1_3" class="col-md-4">
+                    <BlazoredTypeahead id="textarticulo" SearchMethod="SearchArticles2"
+                                       @bind-Value="SelectedArticle2">
+                        <SelectedTemplate>
+                            @context.nombre
+                        </SelectedTemplate>
+                        <ResultTemplate>
+                            @context.idArticulo <strong>  |  @context.nombre </strong>
+                        </ResultTemplate>
+                    </BlazoredTypeahead>
+
+                    @if (SelectedArticle2 != null)
+                    {
+                        <input type="text" id="id2" value="@SelectedArticle2.idArticulo" hidden>
+                        <input type="text" id="codigo2" value="@SelectedArticle2.codigo" hidden>
+                        <input type="text" id="desc2" value="@SelectedArticle2.descripcion" hidden>
+                        <input type="text" id="nombre2" value="@SelectedArticle2.nombre" hidden>
+                        <input type="text" id="stock2" value="@SelectedArticle2.stock" hidden>
+                        <input type="text" id="precio2" value="@SelectedArticle2.precio" hidden>
+                    }
+                </div>
+                <div id="BootstrapFormLayout1_5" class="col-md-1">
+                    <button id="btnAgregarArt" type="button" class="btn btn-primary" @onclick="AddRow"><span class="oi oi-plus"></span> </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="card bg-default">
+    <div class="card-header">Lista de productos</div>
+    <div class="card-body">
+        <div class="col-sm-12 table-responsive table-condensed table-sm" style="font-size:small">
+            <table class="table table-hover" id="tablaArticulos">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Id</th>
+                        <th>Descripcion</th>
+                        <th>Nombre</th>
+                        <th>Codigo</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Importe</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <hr />
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-8 table-responsive table-condensed table-sm" style="font-size:small">
+
+                </div>
+                <div class="col-2 table-responsive table-condensed table-sm" style="font-size:small">
+                    <div class="row">
+                        <h4><span class="badge badge-secondary"> Enganche: </span></h4>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <h4><span class="badge badge-secondary"> Bonificación Eng: </span></h4>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <h4><span class="badge badge-secondary"> Total: </span></h4>
+                    </div>
+                    <br />
+                </div>
+                <div class="col-2 table-responsive table-condensed table-sm" style="font-size:small">
+                    <div class="row">
+                        <input class="form-control" type="text" name="eng" id="eng" disabled>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <input class="form-control" type="text" name="bonif" id="bonif" disabled>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <EditForm Model="@ventas">
+                            <input class="form-control" type="text" name="tot" id="tot"  disabled>
+                        </EditForm>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <EditForm Model="@ventas">
+                            <input class="form-control" type="number" step="any" name="tot2" id="tot2" @bind="ventas.totalVenta" placeholder="Confirmación total">
+                        </EditForm>
+                    </div>
+                    <br />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+
+<div class="container" id="botones">
+    <div class="row">
+        <div class="col-8">
+
+        </div>
+        <div class="col-2">
+            <button id="btnSiguiente" type="button" class="btn btn-primary" @onclick="validaSig"><span class="oi oi-circle-check"></span> Siguiente</button>
+        </div>
+        <div class="col-2">
+            <input type="button" value="Cancelar" class="btn btn-danger" @onclick="CancelVentas" />
+        </div>
+    </div>
+</div>
+<br />
+
+<div class="container" id="card2" style="display: none;">
+    <div class="card bg-default">
+        <div class="card-header align-center"><h4 class="align-center">ABONOS MENSUALES</h4></div>
+        <div class="card-body">
+            <div class="dxbs-fl form-horizontal">
+                <table class="table table-hover" id="tablaAbonos">
+                    <thead class="thead-light">
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>3 ABONOS DE </td>
+                            <td> <span id="3div" class="badge badge-secondary"></span></td>
+                            <td> TOTAL A PAGAR $ <span id="3tot" class="badge badge-secondary"></span></td>
+                            <td>SE AHORRA $ <span id="3ahorro" class="badge badge-secondary"></span></td>
+                            <td><input class="form-check-input" type="radio" name="flexRadioDefault" id="rad3" checked></td>
+                        </tr>
+                        <tr>
+                            <td>6 ABONOS DE </td>
+                            <td> <span id="6div" class="badge badge-secondary"></span></td>
+                            <td> TOTAL A PAGAR $ <span id="6tot" class="badge badge-secondary"></span></td>
+                            <td>SE AHORRA $ <span id="6ahorro" class="badge badge-secondary"></span></td>
+                            <td><input class="form-check-input" type="radio" name="flexRadioDefault" id="rad6"></td>
+                        </tr>
+                        <tr>
+                            <td>9 ABONOS DE </td>
+                            <td> <span id="9div" class="badge badge-secondary"></span></td>
+                            <td> TOTAL A PAGAR $ <span id="9tot" class="badge badge-secondary"></span></td>
+                            <td>SE AHORRA $ <span id="9ahorro" class="badge badge-secondary"></span></td>
+                            <td><input class="form-check-input" type="radio" name="flexRadioDefault" id="rad9"></td>
+                        </tr>
+                        <tr>
+                            <td>12 ABONOS DE </td>
+                            <td> <span id="12div" class="badge badge-secondary"></span></td>
+                            <td> TOTAL A PAGAR $ <span id="12tot" class="badge badge-secondary"></span></td>
+                            <td>SE AHORRA $ <span id="12ahorro" class="badge badge-secondary"></span></td>
+                            <td><input class="form-check-input" type="radio" name="flexRadioDefault" id="rad12"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="container" id="card3" style="display: none;">
+    <div class="row">
+        <div class="col-10">
+        </div>
+        <div class="col-2">
+            <button id="btnGuarar" type="button" class="btn btn-success" @onclick="GuardarVenta"><span class="oi oi-circle-check"></span> Guardar</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int idVenta { get; set; }
+    public int idCliente { get; set; }
+    public string totales { get; set; }
+
+    // Ventas ventas = new Ventas();
+    BlazorPractica.Model.Ventas ventas = new BlazorPractica.Model.Ventas();
+
+    private IEnumerable<Cliente> Cliente;
+    private Cliente SelectedArticle;
+
+    private IEnumerable<Art> Articulo;
+    private Art SelectedArticle2;
+
+    protected async override void OnInitialized()
+    {
+        Cliente = await ClienteService.GetAllClientesVentas();
+
+        Articulo = await ArticuloService.GetAllArtsVentas();
+
+    }
+
+    private async Task<IEnumerable<Cliente>> SearchArticles(string searchText)
+    {
+        return await Task.FromResult(Cliente.Where(x => x.nombre.ToLower().Contains(searchText.ToLower())));
+    }
+
+    private async Task<IEnumerable<Art>> SearchArticles2(string searchText2)
+    {
+        return await Task.FromResult(Articulo.Where(x => x.nombre.ToLower().Contains(searchText2.ToLower())));
+    }
+
+    private async Task AddRow()
+    {
+        await jsRuntime.InvokeVoidAsync("AddRow");
+    }
+
+    private async Task deleteRow()
+    {
+        await jsRuntime.InvokeVoidAsync("deleteRow");
+    }
+
+    private async Task validaSig()
+    {
+        await jsRuntime.InvokeVoidAsync("validaSig");
+    }
+
+    protected async Task GuardarVenta()
+    {
+
+        ventas.idCliente = @SelectedArticle.idCliente;
+
+        await VentasService.GuardarVenta(ventas);
+        await jsRuntime.InvokeVoidAsync("Mensaje");
+        NavigationManager.NavigateTo("/listaventas");
+    }
+
+    protected async Task Anular(int id)
+    {
+
+        await jsRuntime.InvokeVoidAsync("anular(id)");
+
+    }
+
+    protected void CancelVentas()
+    {
+        NavigationManager.NavigateTo("/listaventas");
+    }
+
+
+}

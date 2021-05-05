@@ -1,0 +1,73 @@
+﻿@page "/listaclientes"
+@using BlazorPractica.Model
+@using Interfaces
+@inject IClienteService ClienteService
+
+
+<h1>Lista de Clientes</h1>
+
+<p>Este apartado muestra la lista de clientes.</p>
+@if(clientes == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Apellido Paterno</th>
+                <th>Apellido Materno</th>
+                <th>RFC</th>
+                <th>Fecha Nacimiento</th>
+                <th>Estado</th>
+                <th>Ciudad</th>
+                <th>Colonia</th>
+                <th>C.P.</th>
+                <th>Ingreso</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var cliente in clientes)
+            {
+            <tr>
+                <td>@cliente.idCliente</td>
+                <td>@cliente.nombre</td>
+                <td>@cliente.apellidoPaterno</td>
+                <td>@cliente.apellidoMaterno</td>
+                <td>@cliente.rfc</td>
+                <td>@cliente.fechaNacimiento</td>
+                <td>@cliente.estado</td>
+                <td>@cliente.ciudad</td>
+                <td>@cliente.colonia</td>
+                <td>@cliente.cp</td>
+                <td>@cliente.fechaIngreso</td>
+                <td><a href="/detallecliente/@cliente.idCliente"><i>Editar</i></a></td>
+                <td><a href="/clientedelete/@cliente.idCliente"><i>Borrar</i></a></td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {      
+    private IEnumerable<Cliente> clientes;
+    protected override async Task OnInitializedAsync()
+    {
+        //return base.OnInitializedAsync();
+        try
+        {
+            //await JS.MostrarMensaje("Estes es un mensaje de prueba");
+            clientes = await ClienteService.GetAllClientes();
+        }
+        catch(Exception)
+        {
+            throw;
+        }
+    }
+}
